@@ -9,34 +9,32 @@ import (
 
 var receiveGiftList structInfo.ReceiveGiftList
 
-func CreateGiftCodeDao(code string, jsonCodeInfo []byte, validPeriod int) (string, error) {
+func CreateGiftCodeDao(code string, jsonCodeInfo []byte, validPeriod int) (string, *structInfo.Response) {
 	//以礼品吗为key存到Redis,并设置过期时间
 	err := utils.Rdb.Set(code, jsonCodeInfo, time.Duration(validPeriod)*time.Hour).Err()
 	if err != nil {
-		//err1 = errors.New("redis存储异常")
-		return "", err
+		return "", structInfo.RedisErr
 	}
 	return code, nil
 }
 
-func GetGiftCodeInfoDao(code string) (structInfo.GiftCodeInfo, error) {
+func GetGiftCodeInfoDao(code string) (structInfo.GiftCodeInfo, *structInfo.Response) {
 
 	CodeInfo := structInfo.GiftCodeInfo{}
 	//根据礼品码查询礼品信息
 	JsonCodeInfo, err1 := utils.Rdb.Get(code).Result()
 	if err1 != nil {
-		//err1 = errors.New("获取礼包信息失败")
-		return CodeInfo, err1
+		return CodeInfo, structInfo.RedisErr
 	}
 	//反序列化
-	UnmarshalErr := json.Unmarshal([]byte(JsonCodeInfo), &CodeInfo)
-	if UnmarshalErr != nil {
-		return CodeInfo, UnmarshalErr
+	err := json.Unmarshal([]byte(JsonCodeInfo), &CodeInfo)
+	if err != nil {
+		return CodeInfo, structInfo.MarshalErr
 	}
-	return CodeInfo, err1
+	return CodeInfo, nil
 }
 
-func VerifyFiftCodeDao(giftCodeInfo structInfo.GiftCodeInfo, user string) (structInfo.GiftCodeInfo, error) {
+func VerifyFiftCodeDao(giftCodeInfo structInfo.GiftCodeInfo, user string) (structInfo.GiftCodeInfo, *structInfo.Response) {
 	//领取数加一
 	giftCodeInfo.ReceiveNum = giftCodeInfo.ReceiveNum + 1
 	//用户添加到领取列表，保存到Redis
@@ -46,8 +44,11 @@ func VerifyFiftCodeDao(giftCodeInfo structInfo.GiftCodeInfo, user string) (struc
 	code := giftCodeInfo.Code
 	jsonCodeInfo, err1 := json.Marshal(giftCodeInfo)
 	if err1 != nil {
-		return giftCodeInfo, err1
+		return giftCodeInfo, structInfo.MarshalErr
 	}
-	utils.Rdb.Set(code, jsonCodeInfo, utils.Rdb.TTL(code).Val())
+	err := utils.Rdb.Set(code, jsonCodeInfo, utils.Rdb.TTL(code).Val())
+	if err != nil {
+		return giftCodeInfo, structInfo.RedisErr
+	}
 	return giftCodeInfo, nil
 }

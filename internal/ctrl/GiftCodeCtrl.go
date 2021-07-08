@@ -31,9 +31,9 @@ func CreateGiftCode(c *gin.Context) {
 		return
 	}
 
-	code, err := handler.CreateGiftCodeHandler(giftCodeInfo)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, structInfo.CreateErr)
+	code, err1 := handler.CreateGiftCodeHandler(giftCodeInfo)
+	if err1 != nil {
+		c.JSON(http.StatusInternalServerError, err1)
 		return
 	}
 	c.JSON(http.StatusOK, structInfo.OK.WithData(code))
@@ -50,7 +50,7 @@ func GetGiftCodeInfoCtrl(c *gin.Context) {
 	}
 	info, err := handler.GetFiftCodeInfoHandler(code)
 	if err != nil {
-		c.JSON(http.StatusOK, structInfo.FindCodeErr)
+		c.JSON(http.StatusOK, err)
 		return
 	}
 	c.JSON(http.StatusOK, structInfo.OK.WithData(info))
@@ -72,7 +72,7 @@ func VerifyGiftCodeCtrl(c *gin.Context) {
 	}
 	info, err := handler.VerifyFiftCodeHandler(code, user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, structInfo.VerifyCodeErr)
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 	res := structInfo.GiftContentList{

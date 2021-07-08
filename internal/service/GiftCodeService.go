@@ -5,13 +5,12 @@ import (
 	"RedisGiftCode/internal/structInfo"
 	"RedisGiftCode/internal/utils"
 	"encoding/json"
-	"errors"
 	"time"
 )
 
 //管理后台调用 - 创建礼品码
 
-func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, error) {
+func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, *structInfo.Response) {
 	code := utils.GetGiftCodeUtil()
 	giftCodeInfo.Code = code
 	//设置创建时间
@@ -20,7 +19,7 @@ func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, error)
 	validPeriod := giftCodeInfo.ValidPeriod
 	jsonCodeInfo, err1 := json.Marshal(giftCodeInfo)
 	if err1 != nil {
-		return "", err1
+		return "", structInfo.MarshalErr
 	}
 	CodeInfo, err := dao.CreateGiftCodeDao(code, jsonCodeInfo, validPeriod)
 	if err != nil {
@@ -31,11 +30,10 @@ func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, error)
 
 //管理后台调用 - 查询礼品码信息
 
-func GetGiftCodeInfoService(code string) (structInfo.GiftCodeInfo, error) {
+func GetGiftCodeInfoService(code string) (structInfo.GiftCodeInfo, *structInfo.Response) {
 	//根据礼品码查询礼品信息
 	CodeInfo, err := dao.GetGiftCodeInfoDao(code)
 	if err != nil {
-		//err = errors.New("礼品码查询异常")
 		return CodeInfo, err
 	}
 	//显示礼包类型
@@ -52,7 +50,7 @@ func GetGiftCodeInfoService(code string) (structInfo.GiftCodeInfo, error) {
 
 //客户端调用 - 验证礼品码
 
-func VerifyFiftCodeService(code string, user string) (structInfo.GiftCodeInfo, error) {
+func VerifyFiftCodeService(code string, user string) (structInfo.GiftCodeInfo, *structInfo.Response) {
 	CodeInfo, err := dao.GetGiftCodeInfoDao(code)
 	if err != nil {
 		return CodeInfo, err
@@ -60,7 +58,6 @@ func VerifyFiftCodeService(code string, user string) (structInfo.GiftCodeInfo, e
 	switch CodeInfo.CodeType {
 	case -1:
 		if CodeInfo.ReceiveNum == 1 || CodeInfo.User != user {
-			err = errors.New("礼包码已经领取过了")
 			return CodeInfo, err
 		}
 		dao.VerifyFiftCodeDao(CodeInfo, user)

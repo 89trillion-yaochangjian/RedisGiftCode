@@ -11,6 +11,8 @@ var (
 	VerifyCodeErr = response(1005, "礼品码验证失败")
 	CodeTypeErr   = response(1006, "礼品码类型错误")
 	CodeUserErr   = response(1007, "请输用户名")
+	RedisErr      = response(1008, "redis异常")
+	MarshalErr    = response(1009, "序列化异常")
 )
 
 type Response struct {

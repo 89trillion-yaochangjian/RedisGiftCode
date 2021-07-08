@@ -1,8 +1,8 @@
-package StructInfo
+package structInfo
 
 import "time"
 
-type ReceiveGiftList struct{
+type ReceiveGiftList struct {
 	ReceiveUser string
 	ReceiveTime time.Time
 }

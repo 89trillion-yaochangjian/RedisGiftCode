@@ -7,11 +7,6 @@
 ```
 .
 ├── README.md
-├── StructInfo
-│   ├── GiftCodeInfo.go
-│   ├── GiftContentList.go
-│   ├── ReceiveGiftList.go
-│   └── ginResult.go
 ├── __pycache__
 │   └── locustfile.cpython-39.pyc
 ├── app
@@ -30,13 +25,17 @@
 │   ├── service
 │   │   ├── GiftCodeService.go
 │   │   └── GiftCodeService_test.go
+│   ├── structInfo
+│   │   ├── GiftCodeInfo.go
+│   │   ├── GiftContentList.go
+│   │   ├── ReceiveGiftList.go
+│   │   └── ginResult.go
 │   └── utils
 │       ├── GetRandomString.go
 │       └── initClient.go
 ├── locustFile.py
 ├── report_1625710932.148289.html
 └── 流程图.png
-
 
 
 ```

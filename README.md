@@ -10,7 +10,8 @@
 ├── StructInfo
 │   ├── GiftCodeInfo.go
 │   ├── GiftContentList.go
-│   └── ReceiveGiftList.go
+│   ├── ReceiveGiftList.go
+│   └── ginResult.go
 ├── __pycache__
 │   └── locustfile.cpython-39.pyc
 ├── app
@@ -20,6 +21,8 @@
 ├── internal
 │   ├── ctrl
 │   │   └── GiftCodeCtrl.go
+│   ├── dao
+│   │   └── GiftCodeDao.go
 │   ├── handler
 │   │   └── GiftCodeHandler.go
 │   ├── router
@@ -31,7 +34,9 @@
 │       ├── GetRandomString.go
 │       └── initClient.go
 ├── locustFile.py
-└── report_1625539390.4651678.html
+├── report_1625710932.148289.html
+└── 流程图.png
+
 
 
 ```
@@ -51,7 +56,42 @@
 
 #### 4.存储设计
 
-使用redis存储数据，ID 为8位随机礼品码 string类型，value为礼品码信息
+
+礼包码信息
+
+|  内容 |数据库   | key  | 类型  |
+| ------------ | ------------ | ------------ | ------------ |
+|   礼品码描述| Redis  | GiftDes  |  string |
+| 礼品码类型  | Redis  |  CodeType |   int|
+|  礼品码类型描述 |  Redis | CodeTypeDesc  | string  |
+|  已经领取次数 | Redis  |  ReceiveNum |int   |
+| 可以领取的次数  |Redis   |  AvailableTimes |  int |
+|  有效期 |Redis   |  ValidPeriod | int  |
+|  礼包内容 |  Redis | Contents  |   int|
+|  礼包码 |  Redis | Code  |  string |
+|  创建人 | Redis  |  Creator |  string |
+|  创建时间 |  Redis |CreatTime   |time.Time   |
+|  礼品内容列表 | Redis  | ContentList  |  GiftContentList |
+|  领取列表 |  Redis |  ReceiveList |[]ReceiveGiftList   |
+|  指定用户 |  Redis |  User |  string |
+
+礼包领取用户
+
+|  内容 |数据库   | key  | 类型  |
+| ------------ | ------------ | ------------ | ------------ |
+| 领取用户名  | Redis  |ReceiveUser   | string  |
+|  领取时间 | Redis  | ReceiveTime  |time.Time   |
+
+礼包内容
+
+|  内容 |数据库   | key  | 类型  |
+| ------------ | ------------ | ------------ | ------------ |
+| 金币  | Redis  |GoldCoins   | int  |
+|钻石   | Redis  |  Diamonds | int  |
+| 道具  |  Redis |Props   |  int |
+| 英雄  |Redis   | Heroes  |int   |
+|  小兵 | Redis  |  Creeps |  int |
+
 
 #### 5. 接口设计
 
@@ -79,6 +119,6 @@ go build
 
 #### 7、todo
 
-定义异常结构体，统一处理异常
+进一步划分代码，增加代码的可服用以及可扩展行
 
 

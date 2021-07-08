@@ -22,18 +22,18 @@ func TestCreateGiftCodeService(t *testing.T) {
 		User:           "tom",
 		ContentList:    giftContent,
 	}
-	code := CreateGiftCodeService(GiftCodeInfo)
-	t.Log(code)
+	code, err := CreateGiftCodeService(GiftCodeInfo)
+	t.Log(code, err)
 }
 
 func TestGetGiftCodeInfoService(t *testing.T) {
 	utils.InitClient()
-	GiftInfo := GetGiftCodeInfoService("A4UJTDLV")
-	t.Log(GiftInfo)
+	GiftInfo, err := GetGiftCodeInfoService("A4UJTDLV")
+	t.Log(GiftInfo, err)
 }
 
 func TestVerifyFiftCodeService(t *testing.T) {
 	utils.InitClient()
-	ContentInfo := VerifyFiftCodeService("A4UJTDLV", "tom")
-	t.Log(ContentInfo)
+	ContentInfo, err := VerifyFiftCodeService("A4UJTDLV", "tom")
+	t.Log(ContentInfo, err)
 }

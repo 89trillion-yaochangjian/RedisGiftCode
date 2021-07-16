@@ -7,7 +7,7 @@ import (
 
 // 随机生成指定位数的大写字母和数字的组合
 
-func  GetGiftCodeUtil() string {
+func GetGiftCodeUtil() string {
 	str := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	bytes := []byte(str)
 	result := []byte{}
@@ -17,4 +17,3 @@ func  GetGiftCodeUtil() string {
 	}
 	return string(result)
 }
-

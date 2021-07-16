@@ -1,4 +1,4 @@
-package structInfo
+package model
 
 import "time"
 

@@ -1,40 +1,47 @@
 package dao
 
 import (
-	"RedisGiftCode/internal/structInfo"
+	"RedisGiftCode/internal/model"
+	"RedisGiftCode/internal/status"
 	"RedisGiftCode/internal/utils"
 	"encoding/json"
 	"time"
 )
 
-var receiveGiftList structInfo.ReceiveGiftList
+var receiveGiftList model.ReceiveGiftList
 
-func CreateGiftCodeDao(code string, jsonCodeInfo []byte, validPeriod int) (string, *structInfo.Response) {
+//创建礼品码
+
+func CreateGiftCodeDao(code string, jsonCodeInfo []byte, validPeriod int) (string, *status.Response) {
 	//以礼品吗为key存到Redis,并设置过期时间
 	err := utils.Rdb.Set(code, jsonCodeInfo, time.Duration(validPeriod)*time.Hour).Err()
 	if err != nil {
-		return "", structInfo.RedisErr
+		return "", status.RedisErr
 	}
 	return code, nil
 }
 
-func GetGiftCodeInfoDao(code string) (structInfo.GiftCodeInfo, *structInfo.Response) {
+//管理后台调用 - 查询礼品码信息
 
-	CodeInfo := structInfo.GiftCodeInfo{}
+func GetGiftCodeInfoDao(code string) (model.GiftCodeInfo, *status.Response) {
+
+	CodeInfo := model.GiftCodeInfo{}
 	//根据礼品码查询礼品信息
 	JsonCodeInfo, err1 := utils.Rdb.Get(code).Result()
 	if err1 != nil {
-		return CodeInfo, structInfo.RedisErr
+		return CodeInfo, status.RedisErr
 	}
 	//反序列化
 	err := json.Unmarshal([]byte(JsonCodeInfo), &CodeInfo)
 	if err != nil {
-		return CodeInfo, structInfo.MarshalErr
+		return CodeInfo, status.MarshalErr
 	}
 	return CodeInfo, nil
 }
 
-func VerifyFiftCodeDao(giftCodeInfo structInfo.GiftCodeInfo, user string) (structInfo.GiftCodeInfo, *structInfo.Response) {
+//客户端调用 - 验证礼品码
+
+func VerifyFiftCodeDao(giftCodeInfo model.GiftCodeInfo, user string) (model.GiftCodeInfo, *status.Response) {
 	//领取数加一
 	giftCodeInfo.ReceiveNum = giftCodeInfo.ReceiveNum + 1
 	//用户添加到领取列表，保存到Redis
@@ -44,11 +51,11 @@ func VerifyFiftCodeDao(giftCodeInfo structInfo.GiftCodeInfo, user string) (struc
 	code := giftCodeInfo.Code
 	jsonCodeInfo, err1 := json.Marshal(giftCodeInfo)
 	if err1 != nil {
-		return giftCodeInfo, structInfo.MarshalErr
+		return giftCodeInfo, status.MarshalErr
 	}
 	err := utils.Rdb.Set(code, jsonCodeInfo, utils.Rdb.TTL(code).Val())
 	if err != nil {
-		return giftCodeInfo, structInfo.RedisErr
+		return giftCodeInfo, status.RedisErr
 	}
 	return giftCodeInfo, nil
 }

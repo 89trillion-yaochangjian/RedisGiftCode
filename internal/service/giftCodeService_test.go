@@ -1,7 +1,7 @@
 package service
 
 import (
-	model2 "RedisGiftCode/internal/structInfo"
+	model2 "RedisGiftCode/internal/model"
 	"RedisGiftCode/internal/utils"
 	"testing"
 )

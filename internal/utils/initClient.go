@@ -15,7 +15,6 @@ func InitClient() (err error) {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-
 	_, err = Rdb.Ping().Result()
 	if err != nil {
 		return err

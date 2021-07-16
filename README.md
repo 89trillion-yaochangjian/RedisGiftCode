@@ -15,27 +15,28 @@
 ├── go.sum
 ├── internal
 │   ├── ctrl
-│   │   └── GiftCodeCtrl.go
+│   │   └── giftCodeCtrl.go
 │   ├── dao
-│   │   └── GiftCodeDao.go
-│   ├── handler
-│   │   └── GiftCodeHandler.go
+│   │   └── giftCodeDao.go
+│   ├── model
+│   │   ├── giftCodeInfo.go
+│   │   ├── giftContentList.go
+│   │   └── receiveGiftList.go
 │   ├── router
-│   │   └── GiftCodeRouter.go
+│   │   └── giftCodeRouter.go
 │   ├── service
-│   │   ├── GiftCodeService.go
-│   │   └── GiftCodeService_test.go
-│   ├── structInfo
-│   │   ├── GiftCodeInfo.go
-│   │   ├── GiftContentList.go
-│   │   ├── ReceiveGiftList.go
+│   │   ├── giftCodeService.go
+│   │   └── giftCodeService_test.go
+│   ├── status
 │   │   └── ginResult.go
+│   ├── test
+│   │   ├── locustFile.py
+│   │   └── 压测报告.html
 │   └── utils
-│       ├── GetRandomString.go
+│       ├── getRandomString.go
 │       └── initClient.go
-├── locustFile.py
-├── report_1625710932.148289.html
-└── 流程图.png
+└── 礼包码流程图.png
+
 
 
 ```
@@ -46,12 +47,14 @@
 
 |层|文件夹|主要职责|调用关系|其他说明|
 | ------------ | ------------ | ------------ | ------------ | ------------ |
-|应用层 |app/http/main.go  |服务器启动 |调用路由层工具层   |不可同层调用
-|路由层 |internal/router/GiftCodeRouter.go  |路由转发 | 调用工具层 控制层 被应用层   |不可同层调用
-|控制层 |internal/ctrl/GiftCodeCtrl.go  |请求参数处理，响应 | 调用handler层 被路由层调用    |不可同层调用
-|handler层 |internal/handler/GiftCodeHandler.go  |处理具体业务 | 调用路由层service层，被控制层调用    |不可同层调用
-|service层   |internal/service/GiftCodeService.go  |处理业务逻辑 | 调用工具层，被handler层调用    |可同层调用
-| 配置文件 |StructInfo  |基本属性，定义异常 | 被dao，service层 、handler层、控制层调用   |不可同层调用
+|应用层 |app/main.go  |服务器启动 |调用路由层工具层   |不可同层调用
+|路由层 |internal/router |路由转发 | 调用工具层 控制层 被应用层调用   |不可同层调用
+|控制层 |internal/ctrl |请求参数处理，响应 | 调用service层 被路由层调用    |不可同层调用
+|service层   |internal/service  |处理业务逻辑 | 调用工具层，被控制层调用    |不可同层调用
+|dao层   |internal/dao |处理数据 | 调用工具层，被service层调用    |不可同层调用
+|model层   |internal/model  |定义结构题 | 被dao层 service层调用    |不可同层调用
+|status层 |internal/status  |定义异常信息 | 被控制层，service层调用    |不可同层调用
+| 工具类 |internal/utils  |获取redis连接 ，生成礼包码| 被dao层调用   |可同层调用
 
 #### 4.存储设计
 
@@ -120,4 +123,6 @@ go build
 
 进一步划分代码，增加代码的可服用以及可扩展行
 
+#### 8、流程图
 
+![fdews](礼品码流程图.png "流程图")

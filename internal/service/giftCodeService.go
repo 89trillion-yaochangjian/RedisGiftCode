@@ -2,7 +2,8 @@ package service
 
 import (
 	"RedisGiftCode/internal/dao"
-	"RedisGiftCode/internal/structInfo"
+	"RedisGiftCode/internal/model"
+	"RedisGiftCode/internal/status"
 	"RedisGiftCode/internal/utils"
 	"encoding/json"
 	"time"
@@ -10,7 +11,7 @@ import (
 
 //管理后台调用 - 创建礼品码
 
-func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, *structInfo.Response) {
+func CreateGiftCodeService(giftCodeInfo model.GiftCodeInfo) (string, *status.Response) {
 	code := utils.GetGiftCodeUtil()
 	giftCodeInfo.Code = code
 	//设置创建时间
@@ -19,7 +20,7 @@ func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, *struc
 	validPeriod := giftCodeInfo.ValidPeriod
 	jsonCodeInfo, err1 := json.Marshal(giftCodeInfo)
 	if err1 != nil {
-		return "", structInfo.MarshalErr
+		return "", status.MarshalErr
 	}
 	CodeInfo, err := dao.CreateGiftCodeDao(code, jsonCodeInfo, validPeriod)
 	if err != nil {
@@ -30,7 +31,7 @@ func CreateGiftCodeService(giftCodeInfo structInfo.GiftCodeInfo) (string, *struc
 
 //管理后台调用 - 查询礼品码信息
 
-func GetGiftCodeInfoService(code string) (structInfo.GiftCodeInfo, *structInfo.Response) {
+func GetGiftCodeInfoService(code string) (model.GiftCodeInfo, *status.Response) {
 	//根据礼品码查询礼品信息
 	CodeInfo, err := dao.GetGiftCodeInfoDao(code)
 	if err != nil {
@@ -50,20 +51,25 @@ func GetGiftCodeInfoService(code string) (structInfo.GiftCodeInfo, *structInfo.R
 
 //客户端调用 - 验证礼品码
 
-func VerifyFiftCodeService(code string, user string) (structInfo.GiftCodeInfo, *structInfo.Response) {
+func VerifyFiftCodeService(code string, user string) (model.GiftCodeInfo, *status.Response) {
 	CodeInfo, err := dao.GetGiftCodeInfoDao(code)
 	if err != nil {
 		return CodeInfo, err
 	}
 	switch CodeInfo.CodeType {
 	case -1:
-		if CodeInfo.ReceiveNum == 1 || CodeInfo.User != user {
-			return CodeInfo, err
+		if CodeInfo.User != user {
+			return CodeInfo, status.DesignatedUser
+		}
+		if CodeInfo.ReceiveNum == 1 {
+			return CodeInfo, status.DesignatedReceived
 		}
 		dao.VerifyFiftCodeDao(CodeInfo, user)
 	case 0:
 		if CodeInfo.AvailableTimes > CodeInfo.ReceiveNum {
 			dao.VerifyFiftCodeDao(CodeInfo, user)
+		} else {
+			return CodeInfo, status.Received
 		}
 	case -2:
 		dao.VerifyFiftCodeDao(CodeInfo, user)

@@ -9,6 +9,7 @@ type GiftCodeInfo struct {
 	ReceiveNum     int               `json:"receive_num"`     //已经领取次数
 	AvailableTimes int               `json:"available_times"` //可以领取的次数
 	ValidPeriod    int               `json:"valid_period"`    //有效期
+	OverTime       time.Time         `json:"over_time"`       //过期时间
 	Contents       int               `json:"contents"`        //礼包内容
 	Code           string            `json:"code"`            //礼包码
 	Creator        string            `json:"creator"`         //创建人

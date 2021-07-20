@@ -29,7 +29,7 @@ func GetGiftCodeInfoDao(code string) (model.GiftCodeInfo, *status.Response) {
 	//根据礼品码查询礼品信息
 	JsonCodeInfo, err1 := utils.Rdb.Get(code).Result()
 	if err1 != nil {
-		return CodeInfo, status.RedisErr
+		return CodeInfo, status.CodeTimeOver
 	}
 	//反序列化
 	err := json.Unmarshal([]byte(JsonCodeInfo), &CodeInfo)
@@ -43,7 +43,8 @@ func GetGiftCodeInfoDao(code string) (model.GiftCodeInfo, *status.Response) {
 
 func VerifyFiftCodeDao(giftCodeInfo model.GiftCodeInfo, user string) (model.GiftCodeInfo, *status.Response) {
 	//领取数加一
-	giftCodeInfo.ReceiveNum = giftCodeInfo.ReceiveNum + 1
+	count := utils.Rdb.Incr(giftCodeInfo.Code + "count")
+	giftCodeInfo.ReceiveNum = count.Val()
 	//用户添加到领取列表，保存到Redis
 	receiveGiftList.ReceiveTime = time.Now()
 	receiveGiftList.ReceiveUser = user

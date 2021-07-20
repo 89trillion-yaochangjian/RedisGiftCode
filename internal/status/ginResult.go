@@ -16,6 +16,7 @@ var (
 	Received           = response(1010, "礼包码已领取结束")
 	DesignatedUser     = response(1011, "指定用户领取")
 	DesignatedReceived = response(1012, "您已领取，不要重复领取")
+	CodeTimeOver       = response(1013, "礼品码过期或者无效")
 )
 
 type Response struct {

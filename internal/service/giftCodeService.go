@@ -15,10 +15,15 @@ func CreateGiftCodeService(giftCodeInfo model.GiftCodeInfo) (string, *status.Res
 	code := utils.GetGiftCodeUtil()
 	giftCodeInfo.Code = code
 	//设置创建时间
-	giftCodeInfo.CreatTime = time.Now()
+	now := time.Now()
+	//转为时间戳
+	timestamp := now.Unix()
+	giftCodeInfo.CreatTime = timestamp
 	//设置过期时间
 	validPeriod := giftCodeInfo.ValidPeriod
-	giftCodeInfo.OverTime = time.Now().Add(time.Duration(validPeriod) * time.Hour)
+	overtime := time.Now().Add(time.Duration(validPeriod) * time.Second)
+	timestamp2 := overtime.Unix()
+	giftCodeInfo.OverTime = timestamp2
 	jsonCodeInfo, err1 := json.Marshal(giftCodeInfo)
 	if err1 != nil {
 		return "", status.MarshalErr

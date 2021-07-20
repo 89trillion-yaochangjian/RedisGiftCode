@@ -1,13 +1,13 @@
 package main
 
 import (
+	"RedisGiftCode/internal/config"
 	"RedisGiftCode/internal/router"
-	"RedisGiftCode/internal/utils"
 )
 
 func main() {
 	//// 初始化连接
-	utils.InitClient()
+	config.InitClient()
 	//调用路由
 	router.GiftCodeRouter()
 }

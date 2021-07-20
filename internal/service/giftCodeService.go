@@ -1,10 +1,10 @@
 package service
 
 import (
+	"RedisGiftCode/internal/config"
 	"RedisGiftCode/internal/dao"
 	"RedisGiftCode/internal/model"
 	"RedisGiftCode/internal/status"
-	"RedisGiftCode/internal/utils"
 	"encoding/json"
 	"time"
 )
@@ -12,7 +12,7 @@ import (
 //管理后台调用 - 创建礼品码
 
 func CreateGiftCodeService(giftCodeInfo model.GiftCodeInfo) (string, *status.Response) {
-	code := utils.GetGiftCodeUtil()
+	code := config.GetGiftCodeUtil()
 	giftCodeInfo.Code = code
 	//设置创建时间
 	now := time.Now()

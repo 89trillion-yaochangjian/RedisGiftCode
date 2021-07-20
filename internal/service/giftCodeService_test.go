@@ -1,13 +1,13 @@
 package service
 
 import (
+	"RedisGiftCode/internal/config"
 	model2 "RedisGiftCode/internal/model"
-	"RedisGiftCode/internal/utils"
 	"testing"
 )
 
 func TestCreateGiftCodeService(t *testing.T) {
-	utils.InitClient()
+	config.InitClient()
 	giftContent := model2.GiftContentList{
 		GoldCoins: 111,
 		Diamonds:  222,
@@ -27,13 +27,13 @@ func TestCreateGiftCodeService(t *testing.T) {
 }
 
 func TestGetGiftCodeInfoService(t *testing.T) {
-	utils.InitClient()
+	config.InitClient()
 	GiftInfo, err := GetGiftCodeInfoService("A4UJTDLV")
 	t.Log(GiftInfo, err)
 }
 
 func TestVerifyFiftCodeService(t *testing.T) {
-	utils.InitClient()
+	config.InitClient()
 	ContentInfo, err := VerifyFiftCodeService("A4UJTDLV", "tom")
 	t.Log(ContentInfo, err)
 }

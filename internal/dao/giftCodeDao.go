@@ -1,9 +1,9 @@
 package dao
 
 import (
+	"RedisGiftCode/internal/config"
 	"RedisGiftCode/internal/model"
 	"RedisGiftCode/internal/status"
-	"RedisGiftCode/internal/utils"
 	"encoding/json"
 	"time"
 )
@@ -14,7 +14,7 @@ var receiveGiftList model.ReceiveGiftList
 
 func CreateGiftCodeDao(code string, jsonCodeInfo []byte, validPeriod int) (string, *status.Response) {
 	//以礼品吗为key存到Redis,并设置过期时间
-	err := utils.Rdb.Set(code, jsonCodeInfo, time.Duration(validPeriod)*time.Hour).Err()
+	err := config.Rdb.Set(code, jsonCodeInfo, time.Duration(validPeriod)*time.Hour).Err()
 	if err != nil {
 		return "", status.RedisErr
 	}
@@ -27,7 +27,7 @@ func GetGiftCodeInfoDao(code string) (model.GiftCodeInfo, *status.Response) {
 
 	CodeInfo := model.GiftCodeInfo{}
 	//根据礼品码查询礼品信息
-	JsonCodeInfo, err1 := utils.Rdb.Get(code).Result()
+	JsonCodeInfo, err1 := config.Rdb.Get(code).Result()
 	if err1 != nil {
 		return CodeInfo, status.CodeTimeOver
 	}
@@ -43,7 +43,7 @@ func GetGiftCodeInfoDao(code string) (model.GiftCodeInfo, *status.Response) {
 
 func VerifyFiftCodeDao(giftCodeInfo model.GiftCodeInfo, user string) (model.GiftCodeInfo, *status.Response) {
 	//领取数加一
-	count := utils.Rdb.Incr(giftCodeInfo.Code + "count")
+	count := config.Rdb.Incr(giftCodeInfo.Code + "count")
 	giftCodeInfo.ReceiveNum = count.Val()
 	//用户添加到领取列表，保存到Redis
 	receiveGiftList.ReceiveTime = time.Now()
@@ -54,7 +54,7 @@ func VerifyFiftCodeDao(giftCodeInfo model.GiftCodeInfo, user string) (model.Gift
 	if err1 != nil {
 		return giftCodeInfo, status.MarshalErr
 	}
-	err := utils.Rdb.Set(code, jsonCodeInfo, utils.Rdb.TTL(code).Val())
+	err := config.Rdb.Set(code, jsonCodeInfo, config.Rdb.TTL(code).Val())
 	if err != nil {
 		return giftCodeInfo, status.RedisErr
 	}

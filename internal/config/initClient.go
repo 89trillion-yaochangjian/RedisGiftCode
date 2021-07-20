@@ -1,4 +1,4 @@
-package utils
+package config
 
 // 声明一个全局的rdb变量
 import (

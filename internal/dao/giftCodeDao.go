@@ -42,9 +42,6 @@ func GetGiftCodeInfoDao(code string) (model.GiftCodeInfo, *status.Response) {
 //客户端调用 - 验证礼品码
 
 func VerifyFiftCodeDao(giftCodeInfo model.GiftCodeInfo, user string) (model.GiftCodeInfo, *status.Response) {
-	//领取数加一
-	count := config.Rdb.Incr(giftCodeInfo.Code + "count")
-	giftCodeInfo.ReceiveNum = count.Val()
 	//用户添加到领取列表，保存到Redis
 	receiveGiftList.ReceiveTime = time.Now()
 	receiveGiftList.ReceiveUser = user
@@ -58,5 +55,8 @@ func VerifyFiftCodeDao(giftCodeInfo model.GiftCodeInfo, user string) (model.Gift
 	if err != nil {
 		return giftCodeInfo, status.RedisErr
 	}
+	//领取数加一
+	count := config.Rdb.Incr(giftCodeInfo.Code + "count")
+	giftCodeInfo.ReceiveNum = count.Val()
 	return giftCodeInfo, nil
 }
